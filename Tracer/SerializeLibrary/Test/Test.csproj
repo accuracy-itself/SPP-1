@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,8 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj" />
-    <ProjectReference Include="..\Serialization.Abstractions\Serialization.Abstractions.csproj" />
+    <ProjectReference Include="..\SerializeLibrary\SerializeLibrary.csproj" />
   </ItemGroup>
 
 </Project>

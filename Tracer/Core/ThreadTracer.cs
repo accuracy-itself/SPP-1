@@ -7,15 +7,19 @@ using System.Diagnostics;
 
 namespace Core
 {
+    [Serializable]
     public class ThreadTracer
     {
         static object balanceLock = new object();
         public List<MethodTraceInfo> MethodTree;
-        private Stack<MethodTraceInfo> CurrentMethods = new Stack<MethodTraceInfo>();
         public int Id;
         public string ClassName, MethodName;
         public long Time;
         
+        public ThreadTracer()
+        {
+
+        }
 
         public ThreadTracer(int id)
         {
@@ -26,6 +30,7 @@ namespace Core
         public void StartTrace()
         {
             StackTrace sT = new StackTrace(true);
+            Stack<MethodTraceInfo> CurrentMethods = new Stack<MethodTraceInfo>();
             {
                 //string stackIndent = "";
                 //lock (balanceLock)
@@ -67,12 +72,15 @@ namespace Core
             //{
             //    Console.WriteLine(CurrentMethods.Count);
             //}
-            GetMethod().StopWatch.Start();
+            GetMethod(CurrentMethods).StopWatch.Start();
         }
 
         public void StopTrace()
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             StackTrace sT = new StackTrace(true);
+            Stack<MethodTraceInfo> CurrentMethods = new Stack<MethodTraceInfo>();
             {
                 //string stackIndent = "";
                 //lock (balanceLock)
@@ -110,12 +118,13 @@ namespace Core
                 CurrentMethods.Push(new MethodTraceInfo(MethodName, ClassName));
             }
 
-            MethodTraceInfo methodTraceInfo = GetMethod();
+            MethodTraceInfo methodTraceInfo = GetMethod(CurrentMethods);
             methodTraceInfo.StopWatch.Stop();
-            methodTraceInfo.Time = methodTraceInfo.StopWatch.ElapsedMilliseconds;
+            stopWatch.Stop();
+            methodTraceInfo.Time = methodTraceInfo.StopWatch.ElapsedMilliseconds - stopWatch.ElapsedMilliseconds;
         }
 
-        public MethodTraceInfo GetMethod()
+        public MethodTraceInfo GetMethod(Stack<MethodTraceInfo> CurrentMethods)
         {
             MethodTraceInfo info = null, method = null;
             List<MethodTraceInfo> methodlist = MethodTree;

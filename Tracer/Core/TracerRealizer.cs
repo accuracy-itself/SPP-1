@@ -2,13 +2,14 @@
 
 namespace Core
 {
+    [Serializable]
     public class TracerRealizer:ITracer
     {
         //private readonly 
         //private Stack<MethodTraceInfo> CurrentMethods = new Stack<MethodTraceInfo>();
         internal List<ThreadTracer> ThreadTracers; 
         private readonly object Locker = new object();
-        public IReadOnlyList<ThreadTracer> ThreadTracersResult;
+        //public IReadOnlyList<ThreadTracer> ThreadTracersResult;
         //public readonly List<ThreadTracer> ThreadTracersResult;
         public TracerRealizer()
         {
@@ -57,7 +58,7 @@ namespace Core
             return null;
         }
 
-        public IReadOnlyList<ThreadTracer> GetResult()
+        public TraceResult GetResult()
         {
             long time;
             foreach (ThreadTracer threadTracer in ThreadTracers)
@@ -69,8 +70,8 @@ namespace Core
                 }
                 threadTracer.Time = time;
             }
-            ThreadTracersResult = new List<ThreadTracer>(ThreadTracers);
-            return ThreadTracersResult;
+            //ThreadTracersResult = new List<ThreadTracer>(ThreadTracers);
+            return new TraceResult(ThreadTracers);
         }
     }
 }

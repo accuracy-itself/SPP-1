@@ -7,14 +7,20 @@ using System.Diagnostics;
 
 namespace Core
 {
+    [Serializable]
     public class MethodTraceInfo
     {
-        public string Name { get; private set; }
-        public string ClassName { get; private set; }
+        public string Name { get; set; }
+        public string ClassName { get; set; }
         public long Time { get; set; }
-        public List<MethodTraceInfo> ChildrenMethods { get; private set; }
+        public List<MethodTraceInfo> ChildrenMethods { get; set; }
         //public int ThreadId { get; private set; }   
-        public Stopwatch StopWatch { get; private set; }
+        public Stopwatch StopWatch { get; set; }
+
+        public MethodTraceInfo()
+        {
+
+        }
 
         public MethodTraceInfo(string name, string className)
         {

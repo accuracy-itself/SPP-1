@@ -7,11 +7,11 @@ using Core;
 
 namespace Example
 {
-    public class Bar
+    internal class Bar
     {
         private ITracer _tracer;
 
-        public Bar(ITracer tracer)
+        internal Bar(ITracer tracer)
         {
             _tracer = tracer;
         }

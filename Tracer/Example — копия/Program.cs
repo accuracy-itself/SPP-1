@@ -1,7 +1,5 @@
 ﻿using Core;
 using System.Reflection;
-//using Xml;
-using Serialization.Abstractions;
 
 namespace Example
 {
@@ -16,7 +14,7 @@ namespace Example
             List <Thread> threads = new List<Thread>();
             threads.Add(FirstThread);
             threads.Add(SecondThread);
-            threads.Add(ThirdThread);
+            threads.Add (ThirdThread);
 
             foreach (Thread t in threads)
             {
@@ -24,8 +22,8 @@ namespace Example
             }
 
             Boolean threadEnd = false;
-
-            while (!threadEnd)
+            
+            while(!threadEnd)
             {
                 foreach (Thread t in threads)
                 {
@@ -37,24 +35,13 @@ namespace Example
             }
             TraceResult threadtracerres = tracer.GetResult();
 
-            Assembly assembly = Assembly.LoadFrom("D:/C#/Tracer/SerializeLibrary/SerializeLibrary/bin/Debug/net6.0/SerializeLibrary.dll"); 
-            
+            Assembly assembly = Assembly.Load("D:/C#/Tracer/Serialization/Xml/XmlSerializer.cs");
             Type[] serTypes = assembly.GetTypes();
             foreach (Type serType in serTypes)
             {
-                //Console.WriteLine(serType);
-                if (serType.GetInterface("ITraceResultSerializer") != null)
-                {
-                    Console.WriteLine(serType.FullName);
-
-                    ITraceResultSerializer serializer = (ITraceResultSerializer)assembly.CreateInstance(serType.FullName);
-                    StreamWriter sw = new StreamWriter(serType.Name + serializer.Format);
-                    StreamWriter sw2 = new StreamWriter(serType.Name + ".txt");
-                    serializer.Serialize(threadtracerres, sw);
-                    serializer.Serialize(threadtracerres, sw2);
-                }
+                Console.WriteLine(serType.FullName);
             }
-            
+
             Console.WriteLine("Done! " + "Threads count: " + threads.Count);
         }
     }
