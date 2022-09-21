@@ -13,7 +13,8 @@ namespace Tests
         {
             FakerRealizer faker = new FakerRealizer();
             try { A amember = faker.Create<A>(); }
-            catch(System.Exception ex) {
+            catch (System.Exception ex)
+            {
                 Assert.AreEqual(ex.Message, "!!cycle exception!!");
                 return;
             }
@@ -35,14 +36,34 @@ namespace Tests
         {
             FakerRealizer faker = new FakerRealizer();
             List<CodeIdentity> Alist = faker.Create<List<CodeIdentity>>();
-            Assert.IsTrue((Alist.Count != 0) && (Alist[0]!= null));
-            
+            Assert.IsTrue((Alist.Count != 0) && (Alist[0] != null));
+
         }
 
         [TestMethod]
         public void TestDate()
         {
-            
+            FakerRealizer faker = new FakerRealizer();
+            //System.DateTime dateTime = new System.DateTime();
+            System.DateTime dateTime = faker.Create<System.DateTime>();
+            Assert.IsTrue((dateTime != null));
         }
+
+        [TestMethod]
+        public void TestConstructors()
+        {
+            FakerRealizer faker = new FakerRealizer();
+            try
+            {
+                D d = faker.Create<D>();
+            }
+            catch (System.Exception ex)
+            {
+                Assert.AreEqual(ex.Message, "!!no normal constructors available!!");
+                return;
+            }
+            Assert.AreEqual(0, 1);
+        }
+
     }
 }
