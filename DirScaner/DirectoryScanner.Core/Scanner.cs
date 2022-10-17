@@ -8,16 +8,16 @@ namespace DirectoryScanner.Core
         private Semaphore _semaphore;
         private ConcurrentDictionary<Thread, int> _threads = new();
 
-        public readonly DirectoryNode Root;
+        public readonly DirectoryFile Root;
 
-        private ConcurrentQueue<DirectoryNode> _queqe = new();
+        private ConcurrentQueue<DirectoryFile> _queqe = new();
         private CancellationToken _token;
 
         public Scanner(uint threadCount, string path, CancellationToken token)
         {
             _threadCount = threadCount;
             _semaphore = new Semaphore((int)threadCount, (int)threadCount);
-            Root = new DirectoryNode(path, null);
+            Root = new DirectoryFile(path, null);
             _queqe.Enqueue(Root);
             _token = token;
         }
@@ -27,9 +27,9 @@ namespace DirectoryScanner.Core
             while (_queqe.Any() || _threads.Any() && !_token.IsCancellationRequested)
             {
                 _semaphore.WaitOne();
-                if (_queqe.TryDequeue(out DirectoryNode directory) && !_token.IsCancellationRequested)
+                if (_queqe.TryDequeue(out DirectoryFile directory) && !_token.IsCancellationRequested)
                 {
-                    Thread thread = new(obj => ScanNode((DirectoryNode)obj));
+                    Thread thread = new(obj => ScanNode((DirectoryFile)obj));
                     _threads[thread] = thread.ManagedThreadId;
                     thread.Start(directory);
                 }
@@ -37,17 +37,17 @@ namespace DirectoryScanner.Core
             }
         }
 
-        private void ScanNode(DirectoryNode node)
+        private void ScanNode(DirectoryFile node)
         {
             _semaphore.WaitOne();
             var dir = new DirectoryInfo(node.Fullpath);
 
-            var newNodes = new List<Node>();
+            var newNodes = new List<File>();
 
             foreach (var subDir in dir.EnumerateDirectories())
             {
                 if (_token.IsCancellationRequested) break;
-                var subNode = new DirectoryNode(subDir.FullName, node);
+                var subNode = new DirectoryFile(subDir.FullName, node);
                 _queqe.Enqueue(subNode);
 
                 newNodes.Add(subNode);
@@ -56,7 +56,7 @@ namespace DirectoryScanner.Core
             foreach (var file in dir.EnumerateFiles())
             {
                 if (_token.IsCancellationRequested) break;
-                newNodes.Add(new FileNode(file.FullName, file.Length, node));
+                newNodes.Add(new FileFile(file.FullName, file.Length, node));
             }
 
             node.Childs = newNodes;
